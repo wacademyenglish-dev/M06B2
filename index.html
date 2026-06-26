@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>WOLF LABS | B2 The Executive Interview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-void: #050505;        
+            --bg-panel: #111111;       
+            --bg-card: #1A1A1A;        
+            --accent-brand: #D4AF37; /* Executive Gold */  
+            --accent-light: #F3E5AB; /* Champagne */ 
+            --accent-alert: #E63946; /* Refined Red */  
+            --accent-success: #2A9D8F; /* Refined Green */
+            --text-main: #E0E0E0;      
+            --text-muted: #888888;     
+            --shadow-glow: 0 0 30px rgba(212, 175, 55, 0.15);
+            --border-light: rgba(255,255,255,0.08);
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-void);
+            color: var(--text-main);
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.03), transparent 40%),
+                radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.02), transparent 40%);
+        }
+
+        h1, h2, h3, .font-display { font-family: 'Playfair Display', serif; letter-spacing: -0.01em; }
+        .font-code { font-family: 'Fira Code', monospace; }
+
+        #hud-top {
+            position: fixed; top: 0; left: 0; right: 0; padding: 15px 30px;
+            background: rgba(5, 5, 5, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-light); z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+        }
+        
+        .hud-metric { background: rgba(255,255,255,0.03); border: 1px solid var(--border-light); padding: 6px 16px; border-radius: 4px; display: flex; align-items: center; gap: 12px;}
+        .hud-val { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; font-variant-numeric: tabular-nums;}
+
+        #mission-arena { height: 100vh; padding-bottom: 120px; }
+
+        .executive-card {
+            background-color: var(--bg-panel); border-radius: 4px; padding: 3rem;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.9); position: relative; transition: all 0.3s ease;
+            border: 1px solid var(--border-light);
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--accent-brand), #B8860B); color: #000; border-radius: 4px;
+            font-family: 'Inter', sans-serif; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.15em; transition: all 0.3s ease; border: none; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2); font-size: 0.9rem;
+        }
+        .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4); filter: brightness(1.1);}
+        .btn-gold:active { transform: scale(0.98); }
+
+        .mcq-row {
+            background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 4px; transition: all 0.2s ease; cursor: pointer; display: flex; align-items: center; padding: 1.2rem 1.5rem;
+        }
+        .mcq-row:hover:not(.locked-check) { border-color: var(--accent-brand); background: rgba(212, 175, 55, 0.02);}
+        .mcq-row.correct { border-left: 4px solid var(--accent-brand); background: rgba(212, 175, 55, 0.1); color: var(--accent-light); }
+        .mcq-row.wrong { border-left: 4px solid var(--accent-alert); background: rgba(230, 57, 70, 0.05); color: #FCA5A5; }
+
+        /* The Panel (Hostile Interview adaptation) */
+        .panel-member {
+            background: linear-gradient(180deg, var(--bg-panel) 0%, var(--bg-card) 100%);
+            border-radius: 4px; padding: 30px; border: 1px solid var(--border-light);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6); position: relative; overflow: hidden;
+        }
+        .panel-avatar {
+            width: 70px; height: 70px; border-radius: 4px; background: var(--bg-void); border: 1px solid var(--accent-brand);
+            display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--accent-brand);
+            margin: -50px auto 20px auto; position: relative; z-index: 2; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .panel-btn {
+            background: var(--bg-void); border: 1px solid var(--border-light); color: var(--text-main);
+            padding: 16px 20px; border-radius: 4px; font-weight: 500; text-align: left; transition: all 0.2s;
+            cursor: pointer; display: flex; align-items: center; gap: 12px; font-family: 'Inter', sans-serif;
+        }
+        .panel-btn:hover { border-color: var(--accent-brand); background: rgba(212, 175, 55, 0.05);}
+        .panel-btn.selected-correct { border-color: var(--accent-brand); background: rgba(212, 175, 55, 0.15); color: var(--accent-light); pointer-events: none; border-left: 4px solid var(--accent-brand);}
+        .panel-btn.selected-wrong { border-color: var(--accent-alert); background: rgba(230, 57, 70, 0.1); color: #FCA5A5; pointer-events: none; border-left: 4px solid var(--accent-alert);}
+
+        /* Word Builder */
+        .wb-pill { background-color: var(--bg-panel); padding: 12px 24px; font-weight: 500; cursor: pointer; transition: all 0.2s; display: inline-block; border: 1px solid var(--border-light); border-radius: 4px;}
+        .wb-pill:hover { border-color: var(--accent-brand); color: var(--accent-brand); transform: translateY(-2px); }
+        .wb-pill.used { opacity: 0.3; pointer-events: none; transform: scale(0.9); }
+        .wb-dropzone { min-height: 70px; border-bottom: 1px solid var(--text-muted); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; padding: 15px; width: 100%; max-width: 800px; margin: 0 auto; }
+        .pill-in-zone { background-color: var(--bg-card); border: 1px solid var(--accent-brand); color: var(--accent-light); padding: 12px 24px; font-weight: 500; border-radius: 4px; cursor: default; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        #nav-console {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 80px;
+            background: rgba(17, 17, 17, 0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--border-light);
+            display: flex; justify-content: space-between; align-items: center; padding: 0 40px; z-index: 5000; box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+        }
+
+        .drawer { background: var(--bg-panel); color: var(--text-main); border-left: 1px solid var(--border-light); transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); z-index: 5100; box-shadow: -20px 0 50px rgba(0,0,0,0.9);}
+        .drawer.active { transform: translateX(0); }
+
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-3px, 0, 0); } 40%, 60% { transform: translate3d(3px, 0, 0); } }
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--accent-brand); }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+
+        #confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 9999; }
+    </style>
+</head>
+<body class="flex flex-col h-screen overflow-hidden text-base">
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <div id="hud-top" class="hidden justify-between items-center w-full">
+        <div class="flex items-center gap-8">
+            <div class="hud-metric border-[var(--accent-brand)] bg-[var(--accent-brand)]/5">
+                <i class="fas fa-chart-line text-[var(--accent-brand)] text-xl"></i>
+                <div class="flex flex-col">
+                    <span class="text-[9px] font-medium text-[var(--accent-brand)] uppercase tracking-widest font-code">Executive Value</span>
+                    <span id="xp-val" class="hud-val text-[var(--accent-brand)]">0XP</span>
+                </div>
+            </div>
+            <div class="hud-metric">
+                <i class="fas fa-shield-alt text-[var(--accent-light)] opacity-70 text-xl"></i>
+                <div class="flex flex-col">
+                    <span class="text-[9px] font-medium text-gray-500 uppercase tracking-widest font-code">Composure</span>
+                    <span id="hp-val" class="hud-val text-[var(--accent-light)]">100%</span>
+                </div>
+            </div>
+        </div>
+        <div class="text-right flex items-center gap-6">
+            <button onclick="toggleTeacherHUD()" class="px-4 py-2 bg-transparent border border-[var(--accent-brand)] text-[var(--accent-brand)] rounded text-[10px] uppercase tracking-widest hover:bg-[var(--accent-brand)] hover:text-black transition-all font-bold font-code"><i class="fas fa-briefcase mr-2"></i>Boardroom</button>
+            <div class="border-l border-gray-700 pl-6">
+                <p class="font-display text-xl font-black text-white tracking-widest leading-none uppercase">WOLF LABS</p>
+                <p class="text-[10px] font-medium text-gray-400 tracking-[0.2em] uppercase mt-1">Upper B2 Executive</p>
+            </div>
+        </div>
+    </div>
+
+    <main id="dashboard" class="flex flex-col items-center relative px-8 pt-16 pb-48 z-10 w-full h-screen overflow-y-auto">
+        <div class="max-w-4xl w-full flex flex-col items-center text-center space-y-8 animate-in fade-in my-auto pb-10">
+            
+            <div class="executive-card p-8 mb-4 mt-10 inline-block border-t-2 border-[var(--accent-brand)] shadow-glow">
+                <div class="w-24 h-24 bg-[var(--bg-void)] rounded-full flex items-center justify-center overflow-hidden border border-[var(--border-light)] mx-auto">
+                    <i class="fas fa-user-tie text-4xl text-[var(--accent-brand)]"></i>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <p class="text-[var(--accent-brand)] font-medium text-xs tracking-[0.4em] uppercase font-code">Module Focus</p>
+                <h1 class="text-5xl md:text-7xl font-black text-white leading-tight tracking-tight font-display uppercase">The Executive <br> <span class="italic text-[var(--accent-brand)]">Interview</span></h1>
+                <p class="text-lg text-[var(--text-muted)] font-light mt-6 max-w-2xl mx-auto leading-relaxed">Control the narrative. Master Passive Voice for distancing and Advanced Connectors to navigate hostile questions with absolute diplomacy.</p>
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-4 font-code mt-6">
+                <span class="px-4 py-2 border border-[var(--accent-brand)]/40 bg-[var(--accent-brand)]/5 text-[10px] font-medium uppercase tracking-widest text-[var(--accent-light)] rounded-full">P.R. Spin</span>
+                <span class="px-4 py-2 border border-gray-700 text-[10px] font-medium uppercase tracking-widest text-gray-400 rounded-full">Passive Voice</span>
+                <span class="px-4 py-2 border border-gray-700 text-[10px] font-medium uppercase tracking-widest text-gray-400 rounded-full">Advanced Connectors</span>
+            </div>
+            
+            <button onclick="startMission()" class="mt-14 btn-gold px-16 py-4 text-sm mb-10">
+                Enter The Lobby
+            </button>
+        </div>
+    </main>
+
+    <main id="mission-arena" class="hidden flex-grow flex-col overflow-hidden relative mt-20">
+        <div id="mission-content" class="flex-grow overflow-y-auto px-6 py-12 flex flex-col items-center w-full"></div>
+    </main>
+
+    <footer id="nav-console" class="hidden font-inter">
+        <div class="flex items-center gap-6 w-1/4">
+            <button onclick="goHome()" class="text-gray-500 hover:text-[var(--accent-brand)] transition-colors"><i class="fas fa-power-off text-lg"></i></button>
+            <div class="flex flex-col">
+                <span id="console-title" class="text-[11px] font-bold text-white uppercase tracking-widest truncate font-code">EXECUTIVE B2</span>
+                <span id="console-type" class="text-[10px] font-medium text-gray-400 uppercase tracking-widest">The Interview</span>
+            </div>
+        </div>
+        <div class="flex flex-col items-center gap-3 w-1/2">
+            <div class="flex items-center gap-10">
+                <button onclick="prevStep()" class="text-gray-500 hover:text-white transition-colors"><i class="fas fa-chevron-left text-xl"></i></button>
+                <span id="console-counter" class="text-[10px] font-bold text-[var(--accent-brand)] tracking-[0.3em] uppercase font-code">SLIDE 01</span>
+                <button onclick="nextStep()" class="text-gray-500 hover:text-[var(--accent-brand)] transition-all hover:scale-110"><i class="fas fa-chevron-right text-xl"></i></button>
+            </div>
+            <div class="w-64 h-1 bg-[var(--bg-card)] overflow-hidden rounded-full">
+                <div id="progress-bar" class="h-full bg-[var(--accent-brand)] transition-all duration-300" style="width: 0%;"></div>
+            </div>
+        </div>
+        <div class="flex items-center justify-end gap-6 w-1/4">
+            <button onclick="toggleFullscreen()" class="text-gray-500 hover:text-white transition-colors" title="Fullscreen"><i class="fas fa-expand text-lg"></i></button>
+            <button onclick="toggleLessonNavigator()" class="text-gray-500 hover:text-[var(--accent-brand)] transition-colors" title="Agenda"><i class="fas fa-bars text-lg"></i></button>
+        </div>
+    </footer>
+
+    <aside id="lesson-navigator" class="fixed right-0 top-0 h-screen w-80 drawer flex flex-col pt-20 z-[5100]">
+        <div class="p-8 border-b border-[var(--border-light)] text-white font-bold uppercase tracking-widest flex justify-between items-center text-xs font-code bg-[var(--bg-void)]">Agenda <button onclick="toggleLessonNavigator()"><i class="fas fa-times text-gray-500 hover:text-[var(--accent-brand)]"></i></button></div>
+        <div id="nav-steps-list" class="flex-grow overflow-y-auto p-4 space-y-1 bg-[var(--bg-panel)] font-inter text-sm"></div>
+    </aside>
+
+    <aside id="teacher-hud" class="fixed right-0 top-0 h-screen w-[350px] drawer flex flex-col pt-20 z-[5100]">
+        <div class="p-8 border-b border-[var(--border-light)] flex justify-between items-center bg-[var(--bg-void)]">
+            <h2 class="font-display text-xl font-bold text-[var(--accent-brand)] tracking-widest uppercase"><i class="fas fa-briefcase mr-2"></i> Boardroom</h2>
+            <button onclick="toggleTeacherHUD()"><i class="fas fa-times text-lg text-gray-500 hover:text-white"></i></button>
+        </div>
+        <div class="flex-grow overflow-y-auto p-8 space-y-8 bg-[var(--bg-panel)]">
+            <div class="bg-[var(--accent-brand)]/5 p-6 rounded border border-[var(--accent-brand)]/30">
+                <p class="text-[10px] font-medium text-[var(--accent-brand)] uppercase tracking-widest mb-3 font-code">B2 Goal</p>
+                <p class="text-sm text-gray-300 leading-relaxed font-inter font-light">Guide the student away from emotional, direct statements. Train them to use Passive Voice and Advanced Connectors to maintain executive presence during hostile questioning.</p>
+            </div>
+            <div>
+                <p class="text-[10px] font-medium text-gray-400 uppercase tracking-widest mb-4 font-code">Bonus Actions</p>
+                <div class="space-y-3 font-code">
+                    <button onclick="triggerPraise('DIPLOMAT', 'Exceptional executive spin.')" class="w-full py-4 bg-[var(--bg-card)] text-[var(--accent-brand)] border border-gray-700 rounded font-bold text-xs hover:border-[var(--accent-brand)] hover:bg-[var(--accent-brand)]/10 transition-all tracking-widest uppercase">SEND: DIPLOMAT XP</button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <div id="praise-overlay" class="fixed inset-0 z-[6000] flex items-center justify-center bg-black/95 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-500 p-4">
+        <div id="praise-card" class="executive-card p-16 text-center transform scale-50 transition-transform duration-700 border border-[var(--accent-brand)] shadow-[0_0_50px_rgba(212,175,55,0.2)]">
+            <h2 id="praise-main" class="font-display text-5xl md:text-7xl font-bold tracking-tight uppercase mb-4 text-[var(--accent-brand)]"></h2>
+            <p id="praise-sub" class="text-sm font-medium tracking-[0.2em] uppercase mt-6 text-white font-inter opacity-70"></p>
+        </div>
+    </div>
+
+    <script>
+        let state = { hp: 100, xp: 0, current: 0 }; 
+        const esc = (s) => s ? s.replace(/'/g, "\\'").replace(/"/g, "&quot;") : "";
+        
+        const TYPES = { COVER: "Briefing", WARMUP: "Dilemma", DISCUSSION: "Debate", TAPE: "Reference", GRAMMAR: "Framework", PRSPIN: "P.R. Spin", STATEMENT: "Statement", MCQ: "Check", BUILDER: "Construction", SPEAKING: "Panel", EXECUTION: "Execution" };
+        function step(type, title, html) { return { type, title, html }; }
+
+        function updateHUD() {
+            const h = document.getElementById('hp-val'); if(h) h.innerText = Math.max(0, state.hp) + '%';
+            if (state.hp <= 30) h.classList.replace('text-[var(--accent-light)]', 'text-[var(--accent-alert)]');
+            else h.classList.replace('text-[var(--accent-alert)]', 'text-[var(--accent-light)]');
+            const x = document.getElementById('xp-val'); if(x) x.innerText = state.xp + 'XP';
+        }
+
+        const buildFollowUp = (tag, text, color="var(--accent-brand)") => `
+            <div class="mt-10 w-full bg-[var(--bg-card)] border-l-2 p-6 flex flex-col md:flex-row md:items-center gap-6 shadow-md" style="border-left-color: ${color}; border-radius: 0 4px 4px 0;">
+                <div class="w-10 h-10 rounded bg-[var(--bg-void)] border flex items-center justify-center flex-shrink-0" style="border-color: ${color}40;"><i class="fas fa-comment-dots text-lg" style="color: ${color}"></i></div>
+                <div class="text-left flex-grow">
+                    <p class="text-[9px] font-bold uppercase tracking-widest mb-1 font-code" style="color: ${color}">${tag}</p>
+                    <p class="text-lg text-white font-inter font-light italic leading-relaxed">"${text}"</p>
+                </div>
+            </div>
+        `;
+
+        const bGuide = (title, points) => step(TYPES.COVER, title, `
+            <div class="max-w-4xl mx-auto space-y-10 animate-in fade-in py-10">
+                <div class="executive-card border-t-2 border-[var(--accent-brand)]">
+                    <p class="text-[var(--accent-brand)] font-medium uppercase tracking-[0.3em] text-[10px] mb-8 flex items-center gap-3 font-code">
+                        <i class="fas fa-briefcase text-sm"></i> Executive Summary
+                    </p>
+                    <h2 class="font-display text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight mb-10 pb-8 border-b border-[var(--border-light)]">${title}</h2>
+                    <div class="space-y-6 font-inter">
+                        ${points.map(p => `<p class="text-lg text-[var(--text-main)] font-light leading-relaxed flex items-start gap-4"><i class="fas fa-check text-[var(--accent-brand)] text-[14px] mt-1.5 opacity-60"></i> ${p}</p>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `);
+
+        const bBoardroomDilemma = (id, title, prompt, incidents) => step(TYPES.WARMUP, title, `
+            <div class="max-w-5xl mx-auto w-full flex flex-col items-center py-10 animate-in fade-in" id="incident-${id}">
+                <div class="w-16 h-16 bg-[var(--bg-card)] border border-[var(--border-light)] rounded flex items-center justify-center mb-8 shadow-md">
+                    <i class="fas fa-eye text-2xl text-[var(--accent-alert)] opacity-80"></i>
+                </div>
+                <p class="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.4em] mb-4 font-code">Executive Dilemma</p>
+                <h2 class="font-display text-4xl md:text-5xl font-bold text-white tracking-tight mb-6 text-center">${title}</h2>
+                <p class="text-[var(--text-main)] text-xl font-light mb-12 text-center max-w-2xl font-inter leading-relaxed">${prompt}</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mb-10">
+                    ${incidents.map((c, i) => `
+                        <button onclick="selectIncident('${id}', this, '${esc(c.followup)}')" class="incident-card relative bg-[var(--bg-card)] border border-[var(--border-light)] rounded p-8 text-left transition-all hover:border-[var(--accent-brand)] hover:bg-[var(--accent-brand)]/5 hover:-translate-y-1">
+                            <h3 class="text-lg font-bold text-white mb-3 font-inter">${c.title}</h3>
+                            <p class="text-sm text-[var(--text-muted)] font-inter font-light leading-relaxed">${c.desc}</p>
+                        </button>
+                    `).join('')}
+                </div>
+                
+                <div id="incident-fb-${id}" class="hidden w-full max-w-4xl transition-all duration-500">
+                    <!-- Placeholder filled by JS -->
+                </div>
+            </div>
+        `);
+
+        const bDiscussion = (title, subtitle, tag, text, color="var(--accent-brand)") => step(TYPES.DISCUSSION, title, `
+            <div class="max-w-4xl mx-auto py-16 animate-in fade-in flex flex-col items-center text-center">
+                <i class="fas fa-users text-5xl mb-6 text-[var(--accent-brand)] opacity-80"></i>
+                <h2 class="font-display text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">${title}</h2>
+                <p class="text-xl text-[var(--text-muted)] font-inter font-light mb-12 max-w-2xl leading-relaxed">${subtitle}</p>
+                <div class="w-full text-left">${buildFollowUp(tag, text, color)}</div>
+            </div>
+        `);
+
+        const bAudioLog = (title, videoId, instruction) => {
+            return step(TYPES.TAPE, title, `
+            <div class="max-w-5xl mx-auto w-full flex flex-col items-center py-10 animate-in fade-in">
+                <div class="text-center mb-10">
+                    <p class="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.4em] mb-4 font-code"><i class="fab fa-youtube mr-2"></i> Uncut Reference</p>
+                    <h2 class="font-display text-4xl md:text-5xl font-bold text-white tracking-tight">${title}</h2>
+                </div>
+                <div class="executive-card w-full max-w-4xl flex flex-col items-center p-10 border-t-2 border-[var(--accent-brand)]">
+                    <p class="text-xl text-[var(--text-main)] font-light mb-8 text-center max-w-2xl leading-relaxed font-inter">"${instruction}"</p>
+                    <div class="w-full aspect-video bg-black border border-[var(--border-light)] shadow-2xl relative overflow-hidden rounded">
+                        <iframe class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/${videoId}?rel=0" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+            `);
+        };
+
+        const bPRSpin = (id, title, context, badPhrase, options, correctIdx, followupText) => step(TYPES.PRSPIN, title, `
+            <div class="max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[60vh] text-center space-y-8 animate-in fade-in py-10" id="prspin-${id}">
+                <p class="text-[10px] font-bold text-[var(--accent-alert)] uppercase tracking-[0.4em] mb-2 font-code">Reputation Management</p>
+                <h2 class="font-display text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight">${title}</h2>
+                <p class="text-xl text-[var(--text-main)] font-light max-w-2xl font-inter leading-relaxed">${context}</p>
+                
+                <div class="w-full max-w-3xl executive-card mt-8 mb-4 border-l-4 border-[var(--accent-alert)] p-8">
+                    <p class="text-[10px] font-bold uppercase text-[var(--text-muted)] tracking-widest mb-4 font-code">Raw / Emotional Draft</p>
+                    <p class="text-2xl font-medium text-white leading-relaxed line-through opacity-60">"${badPhrase}"</p>
+                </div>
+
+                <div class="w-full max-w-3xl space-y-4">
+                    <p class="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest text-left font-code mt-4 mb-2">Select the Diplomatic Spin:</p>
+                    ${options.map((opt, i) => `
+                        <div class="mcq-row locked-check group" onclick="handleMCQ('${id}', this, ${i === correctIdx})">
+                            <span class="text-lg font-medium text-white text-left font-inter flex-grow">${opt.replace(/\[(.*?)\]/g, '<span class="text-[var(--accent-brand)]">$1</span>')}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div id="followup-box-${id}" class="hidden w-full max-w-3xl mt-8 transition-all">
+                    ${followupText ? buildFollowUp("EXECUTIVE DEBRIEF", followupText) : ''}
+                </div>
+            </div>
+        `);
+
+        const bGrammar = (title, rule, examples, tagColor="var(--accent-brand)", followupTag="", followupText="") => step(TYPES.GRAMMAR, title, `
+            <div class="max-w-5xl mx-auto space-y-10 animate-in fade-in py-10">
+                <div class="text-center space-y-4 mb-14">
+                    <p class="text-[10px] font-medium text-[var(--text-muted)] uppercase tracking-[0.4em] mb-4 font-code">Framework</p>
+                    <h2 class="font-display text-4xl md:text-5xl font-bold text-white tracking-tight">${title}</h2>
+                </div>
+                <div class="executive-card mb-12 border-l-2" style="border-left-color: ${tagColor}">
+                    <p class="text-xl text-white font-light leading-relaxed font-inter">${rule.replace(/\[(.*?)\]/g, `<span style="color: ${tagColor}" class="font-semibold">$1</span>`)}</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                    ${examples.map(ex => `
+                        <div class="bg-[var(--bg-card)] border border-[var(--border-light)] p-8 rounded text-center">
+                            <p class="text-[10px] font-bold uppercase text-[var(--text-muted)] tracking-widest mb-6 font-code border-b border-[var(--border-light)] pb-4">${ex.context}</p>
+                            <p class="text-xl font-medium text-white leading-relaxed font-inter">"${ex.text.replace(/\[(.*?)\]/g, `<span style="color: ${tagColor}">$1</span>`)}"</p>
+                        </div>
+                    `).join('')}
+                </div>
+                ${followupText ? buildFollowUp(followupTag, followupText, tagColor) : ''}
+            </div>
+        `);
+
+        const bStatement = (id, title, context, sentence, options, followupText="") => {
+            const optsHtml = options.map((opt, i) => `
+                <button class="w-full text-left p-4 border border-[var(--border-light)] rounded bg-[var(--bg-panel)] hover:border-[var(--accent-brand)] transition-all font-inter group" onclick="handleStatement('${id}', this, '${opt.type}')">
+                    <span class="text-white group-hover:text-[var(--accent-brand)] transition-colors text-lg font-medium">${opt.text}</span>
+                </button>
+            `).join('');
+
+            return step(TYPES.STATEMENT, title, `
+                <div class="max-w-5xl mx-auto flex flex-col md:flex-row gap-12 py-10 animate-in fade-in" id="stmt-${id}">
+                    <div class="w-full md:w-1/2 space-y-6">
+                        <p class="text-[10px] font-bold text-[var(--accent-brand)] uppercase tracking-[0.4em] font-code">Advanced Connector</p>
+                        <h2 class="font-display text-4xl font-bold text-white tracking-tight">${title}</h2>
+                        <p class="text-[var(--text-main)] font-inter font-light leading-relaxed text-lg">${context}</p>
+                        <div class="space-y-3 mt-8" id="stmt-opts-${id}">
+                            ${optsHtml}
+                        </div>
+                    </div>
+                    
+                    <div class="w-full md:w-1/2 flex items-center justify-center">
+                        <div class="executive-card p-10 w-full text-center border-t-2 border-[var(--accent-brand)] shadow-2xl relative">
+                            <i class="fas fa-quote-left text-4xl text-[var(--border-light)] absolute top-6 left-6"></i>
+                            <p class="font-inter font-light text-2xl leading-relaxed text-white mt-8 z-10 relative">
+                                ${sentence.replace(/_____/g, '<span id="stmt-blank-'+id+'" class="inline-block border-b border-dashed border-gray-500 w-32 mx-2 text-center font-bold text-[var(--accent-brand)] transition-all pb-1"></span>')}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div id="stmt-fb-${id}" class="w-full mt-8 hidden transition-all duration-500 max-w-5xl mx-auto">
+                    ${followupText ? buildFollowUp("ANALYSIS", followupText) : ''}
+                </div>
+            `);
+        };
+
+        const bMCQ = (id, title, prompt, options, correctIdx, followupTag="", followupText="") => step(TYPES.MCQ, title, `
+            <div class="max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[60vh] text-center space-y-8 animate-in fade-in py-10">
+                <p class="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.4em] mb-2 font-code">Logic Check</p>
+                <h2 class="font-display text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight">${title}</h2>
+                <p class="text-xl text-[var(--text-main)] font-light max-w-2xl font-inter leading-relaxed">${prompt}</p>
+                
+                <div class="w-full max-w-2xl space-y-4 mt-8">
+                    ${options.map((opt, i) => `
+                        <div class="mcq-row locked-check group" onclick="handleMCQ('${id}', this, ${i === correctIdx})">
+                            <div class="w-10 h-10 rounded border border-[var(--border-light)] bg-[var(--bg-void)] flex items-center justify-center text-sm font-bold text-[var(--text-muted)] mr-5 font-code group-hover:border-[var(--accent-brand)] group-hover:text-white transition-colors">${String.fromCharCode(65 + i)}</div>
+                            <span class="text-lg font-medium text-white text-left font-inter flex-grow">${opt.replace(/\[(.*?)\]/g, '<span class="text-[var(--accent-brand)]">$1</span>')}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div id="followup-box-${id}" class="hidden w-full max-w-2xl mt-8 transition-all">
+                    ${followupText ? buildFollowUp(followupTag, followupText) : ''}
+                </div>
+            </div>
+        `);
+
+        function bWordBuilder(id, title, instruction, expectedArr) {
+            let wordBtns = shuffleArray([...expectedArr]).map(w => `<span class="wb-pill text-lg" onclick="moveWbWord(this, '${esc(w)}', '${id}')">${w}</span>`).join('');
+            return step(TYPES.BUILDER, title, `
+                <div class="max-w-4xl mx-auto w-full flex flex-col items-center py-10 animate-in fade-in" data-expected='${JSON.stringify(expectedArr)}' id="wb-data-${id}">
+                    <p class="text-[10px] font-bold text-[var(--accent-brand)] uppercase tracking-[0.4em] mb-4 font-code">Syntax Assembly</p>
+                    <h2 class="font-display text-4xl md:text-5xl font-bold text-white tracking-tight mb-6 text-center">${title}</h2>
+                    <p class="text-[var(--text-muted)] text-lg mb-12 text-center font-light font-inter">${instruction}</p>
+                    
+                    <div class="w-full executive-card text-center pb-12 border-t-2 border-[var(--accent-brand)]">
+                        <div class="wb-dropzone text-xl font-medium" id="wb-dropzone-${id}"></div>
+                        <div class="flex justify-center flex-wrap gap-3 mt-12" id="wb-bank-${id}">
+                            ${wordBtns}
+                        </div>
+                        <button onclick="resetWb('${id}')" class="mt-12 text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest transition font-code"><i class="fas fa-undo mr-2"></i>Reset Phrase</button>
+                    </div>
+                    <div id="wb-fb-${id}" class="hidden mt-8 w-full max-w-4xl">
+                        ${buildFollowUp("VERIFIED", "Sentence structure is correct. Notice the advanced inversion used for emphasis.", "var(--accent-success)")}
+                    </div>
+                </div>
+            `);
+        }
+
+        const bPanelInterview = (id, sharkName, sharkRole, statement, options) => {
+            const optsHtml = options.map((opt, i) => `
+                <button class="panel-btn group" onclick="answerPanel('${id}', this, ${opt.correct}, '${esc(opt.feedback)}', ${opt.points})">
+                    <div class="w-8 h-8 rounded border border-gray-600 flex items-center justify-center text-xs font-bold text-[var(--text-muted)] font-code group-hover:border-[var(--accent-brand)] group-hover:text-white transition-colors">${String.fromCharCode(65 + i)}</div>
+                    <span class="text-base font-inter">${opt.text.replace(/\[(.*?)\]/g, '<span class="text-[var(--accent-brand)] font-medium">$1</span>')}</span>
+                </button>
+            `).join('');
+
+            return step(TYPES.SPEAKING, "The Panel", `
+                <div class="max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[60vh] text-center space-y-10 animate-in fade-in py-10" id="panel-${id}">
+                    <p class="text-[10px] font-bold text-[var(--accent-alert)] uppercase tracking-[0.4em] mb-2 font-code shadow-sm animate-pulse">Hostile Inquiry</p>
+                    
+                    <div class="panel-member w-full mt-12 border-t-2 border-[var(--accent-brand)]">
+                        <div class="panel-avatar"><i class="fas fa-user-tie"></i></div>
+                        <h3 class="text-2xl font-display font-bold text-white mb-1">${sharkName}</h3>
+                        <p class="text-xs font-code text-[var(--text-muted)] uppercase tracking-widest mb-8">${sharkRole}</p>
+                        
+                        <div class="bg-[var(--bg-void)] p-8 rounded border border-[var(--border-light)] mb-8 text-center relative">
+                            <p class="text-white font-inter font-light text-xl leading-relaxed italic">"${statement}"</p>
+                        </div>
+
+                        <div class="flex flex-col gap-4">
+                            ${optsHtml}
+                        </div>
+
+                        <div id="panel-fb-${id}" class="hidden mt-8 p-6 bg-[var(--bg-card)] border-l-2 border-[var(--accent-brand)] rounded text-left">
+                            <p class="text-[10px] font-bold text-[var(--accent-brand)] uppercase tracking-widest mb-2 font-code">Evaluation</p>
+                            <p class="text-white font-inter text-sm leading-relaxed" id="panel-fb-text-${id}"></p>
+                        </div>
+                    </div>
+                </div>
+            `);
+        };
+
+        function bThe1on1(title, prompt, instructions, template) {
+            return step(TYPES.EXECUTION, title, `
+                <div class="max-w-4xl mx-auto w-full flex flex-col items-center justify-center min-h-[60vh] text-center animate-in fade-in py-10 relative">
+                    <div class="w-20 h-20 bg-[var(--bg-void)] border border-[var(--accent-brand)] rounded flex items-center justify-center mb-8 shadow-glow"><i class="fas fa-microphone text-3xl text-[var(--accent-brand)] animate-pulse"></i></div>
+                    <p class="text-[10px] font-bold text-[var(--accent-brand)] uppercase tracking-[0.4em] mb-4 font-code">Live Execution</p>
+                    <h2 class="font-display text-4xl md:text-5xl font-bold tracking-tight text-white leading-tight mb-6">${prompt}</h2>
+                    <p class="text-[var(--text-main)] text-xl font-light mb-12 font-inter leading-relaxed">${instructions}</p>
+                    
+                    <div class="w-full executive-card text-left border-l-2 border-[var(--accent-brand)] bg-[var(--bg-void)]">
+                        <p class="text-[10px] font-medium text-[var(--text-muted)] uppercase tracking-widest mb-6 font-code border-b border-gray-800 pb-2">The Final Statement</p>
+                        <div class="text-xl font-medium text-white leading-loose font-inter whitespace-pre-wrap">${template.replace(/\[(.*?)\]/g, '<span class="text-[var(--accent-brand)] border-b border-dashed border-[var(--accent-brand)] pb-1 px-1">[$1]</span>')}</div>
+                    </div>
+
+                    <div class="mt-16 w-full flex flex-col items-center">
+                        <div class="text-6xl font-display font-bold text-white mb-8 tabular-nums tracking-widest" id="pitch-timer">00:60</div>
+                        <button onclick="startPitchTimer(this)" class="btn-gold px-12 py-4"><i class="fas fa-play mr-2"></i> Deliver Statement</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        const bWrap = () => step(TYPES.WRAP, "Offer Accepted", `
+            <div class="text-center max-w-3xl mx-auto flex flex-col items-center justify-center min-h-[60vh] animate-in fade-in">
+                <div class="w-40 h-40 bg-[var(--bg-void)] border border-[var(--accent-brand)] mx-auto flex items-center justify-center text-7xl text-[var(--accent-brand)] mb-12 shadow-glow rounded-full">
+                    <i class="fas fa-signature"></i>
+                </div>
+                <h1 class="text-6xl md:text-8xl font-black text-white tracking-tighter mb-6 font-display">THE C-SUITE</h1>
+                <p class="text-xl text-gray-400 mb-16 font-light font-inter max-w-xl mx-auto leading-relaxed">You successfully controlled the narrative, protected your reputation, and secured the position.</p>
+                <button onclick="goHome()" class="btn-gold px-12 py-4 tracking-widest text-sm">Exit Boardroom</button>
+            </div>
+        `);
+
+        const lessonData = [
+            // 1. Intro
+            bGuide("Controlling The Narrative", [
+                "Level: B2 Upper-Intermediate.",
+                "Focus: Advanced diplomacy, psychological biases, and maintaining executive presence.",
+                "Grammar Masterclass: Passive Voice for Distancing and Advanced Connectors.",
+                "Communication Goal: Learn to navigate hostile questions without sounding defensive.",
+                "Climax: A hostile Panel Interview and a 60-second Final Execution."
+            ]),
+            
+            // 2. Warmup Dilemma
+            bBoardroomDilemma("wu1", "The Termination Question", "You were essentially forced out of your last Director role due to severe conflicts with the Board regarding the company's direction. In your new interview, the CEO asks: 'Why did you leave your last position?'", [
+                { title: "The Honest Attack", desc: "Tell the truth: The board was short-sighted, toxic, and refused to innovate.", followup: "If you attack your previous board, the new CEO will assume you are difficult to manage and will eventually attack them too. Executive presence requires emotional control." },
+                { title: "The Diplomatic Pivot", desc: "State that you had differing strategic visions and chose to pursue environments more aligned with long-term growth.", followup: "Excellent. You acknowledge the exit but reframe it as a strategic choice rather than a personal conflict. This is 'controlling the narrative'." }
+            ]),
+
+            // 3. Storytelling: The Halo Effect Scenario
+            bBoardroomDilemma("halo-story", "The Observation Deck", "You arrive 15 minutes early for your C-Suite interview. The receptionist is overwhelmed and drops a massive stack of confidential files on the floor. The CEO is secretly watching from the glass office above. What is your move?", [
+                { title: "The VIP Approach", desc: "Ignore the mess, confidently approach the desk, and state your name and appointment time.", followup: "You showed confidence, but also arrogance. The CEO sees a lack of empathy. This creates the 'Horns Effect'—they will now subconsciously judge all your answers more harshly." },
+                { title: "The Servant Leader", desc: "Kneel down, help gather the files, hand them back with a polite smile, and wait patiently.", followup: "Excellent. The CEO sees humility and teamwork. You just triggered the 'Halo Effect'. The CEO will now unconsciously view your technical answers more favorably." }
+            ]),
+
+            // 4. Concept: Halo Effect Explanation
+            bGrammar("Psychology: The Halo Effect", "The [Halo Effect] is a cognitive bias. If an interviewer has a positive first impression of you (e.g., posture, empathy, stillness), they unconsciously assume you are also highly intelligent and competent. The opposite is the [Horns Effect].", [
+                {context: "The Positive Halo", text: "'He helped the receptionist; he [must be] a great leader.'"},
+                {context: "The Horns Effect (Negative)", text: "'She slouched in the chair; she [probably lacks] attention to detail.'"}
+            ], "var(--accent-brand)", "EXECUTIVE ADVANTAGE", "Humans are not perfectly rational. Executives hire people they like and trust. Mastering your first 5 seconds makes the rest of the interview significantly easier."),
+
+            // 5. MCQ: Halo Effect
+            bMCQ("mc-halo", "Cognitive Bias Check", "How does the Halo Effect specifically change the dynamic of a difficult interview?", [
+                "It forces the interviewer to ask easier questions.",
+                "It makes the interviewer more likely to forgive a minor mistake in your technical answers.",
+                "It proves your resume is 100% accurate."
+            ], 1, "COACHING NOTE", "If they already 'like' you because of your first impression, they will subconsciously help you succeed during the hard questions."),
+
+            // 6. Grammar: Passive Voice
+            bGrammar("1. The Passive Voice (Distancing)", "Executives rarely use 'I' when discussing failures. To sound objective and remove personal emotion or blame, use the Passive Voice (Object + Be + Past Participle).", [
+                {context: "Emotional & Direct (A2/B1)", text: "'[I made mistakes] during the product launch.'"},
+                {context: "Executive Distancing (B2)", text: "'[Mistakes were made] during the launch, but lessons were learned.'"}
+            ], "var(--accent-brand)", "ANALYSIS", "Notice how the second sentence shifts the focus from 'Who failed' to 'What happened and how we move forward'."),
+
+            // 7. PR Spin (Passive)
+            bPRSpin("pr1", "Shifting the Blame", "The interviewer asks about a project that went over budget under your leadership. You need to explain it without sounding incompetent.", "I failed to manage the budget because my vendors charged me too much.", [
+                "The budget was failed by me because of the vendors.",
+                "The project experienced budget overruns due to unexpected vendor costs, but strict controls have since been implemented.",
+                "I was charged too much by vendors, so the budget failed."
+            ], 1, "The Passive Voice ('was experienced', 'have been implemented') removes the emotional 'I' and focuses on the systemic fix."),
+
+            // 8. MCQ Passive
+            bMCQ("mc2", "Objective Reporting", "Which sentence sounds most like an objective executive report rather than a personal excuse?", [
+                "We lost the client because we didn't send the data.", 
+                "The client was lost because of us not sending data.", 
+                "The account was lost due to a delay in data transmission."
+            ], 2, "COACHING NOTE", "Using 'due to a delay' instead of 'because we delayed' elevates the vocabulary significantly."),
+
+            // 9. Pre-Video Context
+            bDiscussion("The Transition", "Now that we understand the psychology of the first impression (Halo Effect) and how to distance ourselves from failure (Passive Voice), let's look at the mechanics of the interview itself.", "STRATEGY", "We will watch a comprehensive breakdown. Pay attention to how nonverbal cues tie directly into everything we just learned."),
+
+            // 10. Full Video (Moved to the middle)
+            bAudioLog("Top Interview Tips", "HG68Ymazo18", "Watch the full breakdown of top interview strategies. Pay close attention to Nonverbal Communication, handling Behavioral Questions, and what to ask at the end. Build your listening stamina."),
+
+            // 11. Debrief
+            bDiscussion("Video Debrief", "The video covered several key areas: Nonverbal cues, the 'Tell me about yourself' trap, Behavioral structures (STAR), and Final Questions.", "ANALYSIS", "Which of the tips presented in the video do you personally find the most difficult to execute during a real interview?"),
+
+            // 12. Grammar: Connectors
+            bGrammar("2. Advanced Connectors (The Pivot)", "When admitting a weakness or a setback, you must 'Pivot' back to a positive outcome. Use advanced connectors like [Despite, Nevertheless, Yet, Even though] to contrast the negative with the positive.", [
+                {context: "Basic Contrast (B1)", text: "'The market crashed, [but] we survived.'"},
+                {context: "Advanced Pivot (B2)", text: "'[Despite] the market crash, we maintained profitability.'"}
+            ], "var(--accent-light)"),
+
+            // 13. Statement Connectors 1
+            bStatement("s1", "The Turnaround", "You are explaining a quarter where your division lost money, but you want to highlight that you kept the team intact.", "_____ the significant revenue loss in Q3, employee retention remained at 98%.", [
+                {text: "Although", type: "wrong"},
+                {text: "Despite", type: "correct"},
+                {text: "However", type: "wrong"}
+            ], "Remember: 'Despite' is followed by a Noun Phrase (the revenue loss), while 'Although' requires a full clause (Although we lost revenue)."),
+
+            // 14. Statement Connectors 2
+            bStatement("s2", "The Counter-Argument", "The interviewer says you lack experience in their specific industry. You pivot to your general leadership skills.", "I may lack direct experience in telecom; _____, my track record in scaling operations is universally applicable.", [
+                {text: "nevertheless", type: "correct"},
+                {text: "despite", type: "wrong"},
+                {text: "although", type: "wrong"}
+            ], "'Nevertheless' is a powerful, formal alternative to 'however'. It shows resilience against a counter-point."),
+
+            // 15. Discussion Weakness
+            bDiscussion("The Weakness Trap", "The classic question: 'What is your biggest weakness?'. The video warns against clichés like 'I work too hard'.", "STRATEGY", "A great answer uses a connector: 'I sometimes struggle with X; [nevertheless], I have implemented Y to overcome it.' Try it!"),
+
+            // 16. PR Spin Weakness
+            bPRSpin("pr2", "Reframing a Weakness", "You need to admit a real flaw but show you are managing it.", "I am terrible at public speaking and I get really nervous.", [
+                "Public speaking is not my strength; nevertheless, I have actively sought out presentation roles to improve this skill.",
+                "Although I am terrible at public speaking, I try my best.",
+                "Despite my fear of public speaking, I am very good at writing emails."
+            ], 0, "The first option admits the flaw but immediately pivots to the proactive solution using 'nevertheless'."),
+
+            // 17. Grammar Inversions
+            bGrammar("3. Inversions for Emphasis", "To sound incredibly formal and highlight an achievement, advanced speakers use Inversion (placing the auxiliary verb before the subject, like a question).", [
+                {context: "Standard (B1)", text: "'I rescued the account, and I also upsold them.'"},
+                {context: "Inversion (C1/C2)", text: "'[Not only did I] rescue the account, [but I also] upsold them.'"}
+            ], "var(--text-main)"),
+
+            // 18. Word Builder Inversion
+            bWordBuilder("wb1", "Syntax Assembly", "Build a high-level sentence using Inversion (Not only did I...).", ["Not", "only", "did", "I", "rescue", "the", "account", ",", "but", "I", "also", "upsold", "them"]),
+
+            // 19. MCQ Questions
+            bMCQ("mc3", "Strategic Inquiry", "According to executive interview coaching (and the video's conclusion), what is the best type of question to ask at the end?", [
+                "Questions about the exact daily tasks and vacation policies.", 
+                "No questions. It shows you completely understand the role.", 
+                "Strategic questions about the company's 5-year vision and biggest current challenges."
+            ], 2, "COACHING NOTE", "Asking about the 'vision' positions you as a strategic partner, not just an employee looking for a paycheck."),
+
+            // 20. Panel Guide
+            bGuide("Prepare for the Panel", [
+                "You are entering the final stage: The Panel Interview.",
+                "You will face 3 C-Level Executives.",
+                "They will ask hostile, difficult questions designed to make you emotional or defensive.",
+                "Your Goal: Use Passive Voice and Connectors to neutralize the attacks and maintain your Leverage.",
+                "Do not get defensive. Pivot to the solution."
+            ]),
+
+            // 21. Panel 1
+            bPanelInterview("p1", "The CFO", "Financial Scrutiny", "I see here that under your leadership, the European expansion failed miserably and cost the company $2 Million. Why should we trust you with our budget?", [
+                { text: "I didn't fail. The European market was just too difficult and my team didn't work hard enough.", correct: false, points: -20, feedback: "Never blame your team or make emotional excuses. You lost composure." },
+                { text: "While [mistakes were made] regarding market research, valuable lessons [were learned]. [Consequently], my subsequent projects yielded a 40% ROI.", correct: true, points: 20, feedback: "Brilliant. You used Passive Voice to distance yourself from the failure, and 'Consequently' to pivot to your success." }
+            ]),
+
+            // 22. Panel 2
+            bPanelInterview("p2", "The CTO", "Technical Competence", "Your background is in traditional finance. You don't have the technical background to lead a software division like ours. You'll slow us down.", [
+                { text: "I may not code, [nevertheless], my expertise in operational scaling is exactly what this engineering team needs to become profitable.", correct: true, points: 20, feedback: "Perfect use of 'nevertheless' to acknowledge their point but completely invalidate it with your own strength." },
+                { text: "Even though I don't know software, I am a very fast learner and I promise I will study hard.", correct: false, points: -20, feedback: "Too junior. Executives don't 'promise to study hard', they bring parallel value." }
+            ]),
+
+            // 23. Panel 3
+            bPanelInterview("p3", "The CEO", "Culture Fit", "We have a very aggressive, 'always-on' culture here. Some people call it toxic. If you value work-life balance, you won't survive here.", [
+                { text: "I think toxic cultures are bad for business, so I would try to change your culture if you hire me.", correct: false, points: -20, feedback: "You just insulted the CEO's culture. You will not be hired." },
+                { text: "[Despite] preferring structured workflows, I thrive in high-velocity environments, [provided that] expectations are clearly communicated.", correct: true, points: 30, feedback: "Masterful. You used 'Despite' to soften your preference, and set a boundary with 'provided that'." }
+            ]),
+
+            // 24. 60s Execution
+            bThe1on1("The Closing Statement", "The CEO asks: 'Why should we give you this executive role?'", "You have 60 seconds to deliver your final statement. Read it with authority, emphasizing the bracketed connectors and passive structures.", "I understand the challenges this division faces.\n\n[While] mistakes [were made] in the past by previous leadership, the foundation here is strong.\n\n[Not only do I] bring ten years of turnaround experience, [but I also] understand how to align stakeholders.\n\n[Despite] the aggressive timeline, I am confident we can deliver, [provided that] the team is willing to execute the strategy.\n\nI am ready to lead."),
+
+            // 25. Wrap
+            bWrap()
+        ];
+
+        function handleStatement(id, btn, type) {
+            const parent = btn.parentElement;
+            if(parent.dataset.locked === "true") return;
+            parent.dataset.locked = "true";
+            
+            Array.from(parent.children).forEach(c => c.classList.add('opacity-40', 'pointer-events-none'));
+            btn.classList.remove('opacity-40');
+            btn.classList.add('border-[var(--accent-brand)]', 'bg-[var(--accent-brand)]/10');
+            
+            const blank = document.getElementById(`stmt-blank-${id}`);
+            blank.innerText = btn.innerText.trim();
+            blank.classList.remove('border-dashed', 'border-gray-500');
+            blank.classList.add('border-[var(--accent-brand)]', 'text-[var(--accent-brand)]');
+
+            if(type === 'correct') {
+                state.xp += 10; updateHUD(); shootConfetti();
+                const fb = document.getElementById(`stmt-fb-${id}`);
+                if(fb && fb.innerHTML.trim() !== "") { fb.classList.remove('hidden'); fb.classList.add('fade-in'); }
+            } else {
+                state.hp -= 15; updateHUD();
+                btn.classList.add('shake', 'border-[var(--accent-alert)]', 'text-[var(--accent-alert)]');
+                blank.classList.replace('border-[var(--accent-brand)]', 'border-[var(--accent-alert)]');
+                blank.classList.replace('text-[var(--accent-brand)]', 'text-[var(--accent-alert)]');
+                
+                setTimeout(() => {
+                    parent.dataset.locked = "false";
+                    Array.from(parent.children).forEach(c => c.classList.remove('opacity-40', 'pointer-events-none', 'border-[var(--accent-brand)]', 'bg-[var(--accent-brand)]/10', 'shake', 'border-[var(--accent-alert)]', 'text-[var(--accent-alert)]'));
+                    blank.innerText = "";
+                    blank.classList.remove('border-[var(--accent-alert)]', 'text-[var(--accent-alert)]');
+                    blank.classList.add('border-dashed', 'border-gray-500');
+                }, 2000);
+            }
+        }
+
+        function selectIncident(id, btn, followup) {
+            const container = document.getElementById(`incident-${id}`);
+            container.querySelectorAll('.incident-card').forEach(c => { 
+                c.classList.remove('selected', 'border-[var(--accent-brand)]'); 
+                c.style.opacity = '0.3'; 
+            });
+            btn.style.opacity = '1'; btn.classList.add('selected', 'border-[var(--accent-brand)]');
+            
+            const fbBox = document.getElementById(`incident-fb-${id}`);
+            fbBox.innerHTML = buildFollowUp("ANALYSIS", followup, "var(--accent-brand)");
+            fbBox.classList.remove('hidden'); fbBox.classList.add('fade-in');
+        }
+
+        function handleMCQ(id, row, isCorrect) {
+            if(row.classList.contains('locked-check')) {
+                const parent = row.parentElement; 
+                Array.from(parent.children).forEach(child => { 
+                    child.classList.add('opacity-40', 'pointer-events-none'); 
+                    child.classList.remove('locked-check');
+                });
+                row.classList.remove('opacity-40', 'pointer-events-none'); 
+                
+                if(isCorrect) {
+                    row.classList.add('correct'); state.xp += 10; updateHUD(); shootConfetti();
+                } else { 
+                    row.classList.add('wrong', 'shake'); state.hp -= 10; updateHUD(); 
+                    Array.from(parent.children).forEach(child => {
+                        if (child.onclick && child.onclick.toString().includes('true')) {
+                            child.classList.remove('opacity-40', 'pointer-events-none');
+                            child.classList.add('correct');
+                        }
+                    });
+                }
+                const fBox = document.getElementById(`followup-box-${id}`); if(fBox && fBox.innerHTML.trim() !== "") { fBox.classList.remove('hidden'); fBox.classList.add('fade-in'); }
+            }
+        }
+
+        function answerPanel(id, btn, isCorrect, feedback, points) {
+            const fbBox = document.getElementById(`panel-fb-${id}`);
+            const fbText = document.getElementById(`panel-fb-text-${id}`);
+            
+            if (btn.parentElement.dataset.locked) return;
+            btn.parentElement.dataset.locked = "true";
+
+            Array.from(btn.parentElement.children).forEach(child => {
+                if(child !== btn) { child.style.opacity = 0.4; child.style.pointerEvents = 'none'; }
+            });
+
+            if (isCorrect) {
+                btn.classList.add('selected-correct');
+                state.xp += points; updateHUD(); shootConfetti();
+            } else {
+                btn.classList.add('selected-wrong', 'shake');
+                state.hp += points; updateHUD(); 
+            }
+            
+            fbText.innerText = feedback;
+            fbBox.classList.remove('hidden'); fbBox.classList.add('fade-in');
+        }
+
+        let wbState = {};
+        function setupWb() {
+            document.querySelectorAll('[id^="wb-data-"]').forEach(el => {
+                const id = el.id.replace('wb-data-', '');
+                wbState[id] = { current: [], expected: JSON.parse(el.dataset.expected) };
+            });
+        }
+        function moveWbWord(pill, word, id) {
+            if(pill.classList.contains('used')) return;
+            if(!wbState[id]) return;
+            wbState[id].current.push(word); pill.classList.add('used');
+            const dz = document.getElementById(`wb-dropzone-${id}`);
+            const newPill = document.createElement('span'); newPill.className = 'pill-in-zone'; newPill.innerText = word; dz.appendChild(newPill);
+            if(wbState[id].current.length === wbState[id].expected.length) {
+                let win = wbState[id].current.every((val, index) => val === wbState[id].expected[index]);
+                if(win) { document.getElementById(`wb-fb-${id}`).classList.remove('hidden'); updateHUD(); shootConfetti(); }
+                else { dz.classList.add('shake', 'border-[var(--accent-alert)]'); setTimeout(() => dz.classList.remove('shake', 'border-[var(--accent-alert)]'), 400); }
+            }
+        }
+        function resetWb(id) {
+            if(!wbState[id]) return;
+            wbState[id].current = []; document.getElementById(`wb-dropzone-${id}`).innerHTML = ''; document.getElementById(`wb-fb-${id}`).classList.add('hidden');
+            document.getElementById(`wb-bank-${id}`).querySelectorAll('.wb-pill').forEach(p => p.classList.remove('used'));
+        }
+
+        let pitchInterval;
+        function startPitchTimer(btn) {
+            btn.style.display = 'none';
+            let time = 60;
+            const display = document.getElementById('pitch-timer');
+            display.classList.add('text-[var(--accent-brand)]');
+            pitchInterval = setInterval(() => {
+                time--;
+                display.innerText = `00:${time < 10 ? '0'+time : time}`;
+                if (time <= 10) display.classList.add('animate-pulse', 'text-[var(--accent-alert)]');
+                if (time <= 0) { clearInterval(pitchInterval); display.innerText = "TIME'S UP"; shootConfetti(); state.xp += 50; updateHUD(); display.classList.remove('animate-pulse');}
+            }, 1000);
+        }
+
+        function buildLessonNavigator() {
+            const list = document.getElementById('nav-steps-list');
+            if (!list) return;
+            list.innerHTML = '';
+            lessonData.forEach((step, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full text-left p-3 rounded mb-1 transition-all duration-200 border border-transparent text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-white flex flex-col font-inter';
+                btn.innerHTML = `<span class="text-[9px] uppercase tracking-widest opacity-70 font-code mb-1 text-[var(--accent-brand)]">${step.type}</span> <span class="font-medium">${String(index + 1).padStart(2, '0')}. ${step.title}</span>`;
+                btn.onclick = () => { state.current = index; renderStep(); toggleLessonNavigator(); };
+                list.appendChild(btn);
+            });
+        }
+
+        function toggleElementClass(id, action, className) {
+            const el = document.getElementById(id);
+            if (el) { if (action === 'add') el.classList.add(className); else if (action === 'remove') el.classList.remove(className); }
+        }
+
+        function startMission() {
+            toggleElementClass('dashboard', 'add', 'hidden'); toggleElementClass('dashboard', 'remove', 'flex');
+            toggleElementClass('hud-top', 'remove', 'hidden'); toggleElementClass('hud-top', 'add', 'flex');
+            toggleElementClass('mission-arena', 'remove', 'hidden'); toggleElementClass('mission-arena', 'add', 'flex');
+            toggleElementClass('nav-console', 'remove', 'hidden'); toggleElementClass('nav-console', 'add', 'flex');
+            buildLessonNavigator(); renderStep();
+        }
+
+        function goHome() {
+            toggleElementClass('dashboard', 'remove', 'hidden'); toggleElementClass('dashboard', 'add', 'flex');
+            toggleElementClass('hud-top', 'add', 'hidden'); toggleElementClass('hud-top', 'remove', 'flex');
+            toggleElementClass('mission-arena', 'add', 'hidden'); toggleElementClass('mission-arena', 'remove', 'flex');
+            toggleElementClass('nav-console', 'add', 'hidden'); toggleElementClass('nav-console', 'remove', 'flex');
+            state.current = 0; state.hp = 100; state.xp = 0; updateHUD();
+            document.getElementById('lesson-navigator')?.classList.remove('active');
+            document.getElementById('teacher-hud')?.classList.remove('active');
+            clearInterval(pitchInterval);
+        }
+
+        function renderStep() {
+            if (!lessonData || !lessonData[state.current]) return;
+            const step = lessonData[state.current];
+            const sCount = document.getElementById('console-counter'); if(sCount) sCount.innerText = `SLIDE ${String(state.current + 1).padStart(2, '0')}/${lessonData.length}`;
+            const content = document.getElementById('mission-content'); if(content) content.innerHTML = `<div class="w-full max-w-7xl mx-auto">${step.html}</div>`;
+            
+            const pBar = document.getElementById('progress-bar');
+            if(pBar) pBar.style.width = `${((state.current + 1) / lessonData.length) * 100}%`;
+
+            updateHUD();
+            
+            const navList = document.getElementById('nav-steps-list');
+            if (navList) {
+                Array.from(navList.children).forEach((btn, i) => {
+                    if(i === state.current) { btn.classList.add('bg-[var(--bg-card)]', 'text-white', 'border-l-2', 'border-[var(--accent-brand)]'); btn.classList.remove('text-[var(--text-muted)]'); } 
+                    else { btn.classList.remove('bg-[var(--bg-card)]', 'text-white', 'border-l-2', 'border-[var(--accent-brand)]'); btn.classList.add('text-[var(--text-muted)]'); }
+                });
+            }
+            if (step.type === TYPES.BUILDER) setTimeout(setupWb, 100);
+            clearInterval(pitchInterval);
+        }
+
+        function nextStep() { if (state.current < lessonData.length - 1) { state.current++; renderStep(); } }
+        function prevStep() { if (state.current > 0) { state.current--; renderStep(); } }
+        
+        function toggleLessonNavigator() { document.getElementById('lesson-navigator').classList.toggle('active'); document.getElementById('teacher-hud')?.classList.remove('active'); }
+        function toggleTeacherHUD() { document.getElementById('teacher-hud').classList.toggle('active'); document.getElementById('lesson-navigator')?.classList.remove('active'); }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => console.log(err)); } 
+            else { if (document.exitFullscreen) document.exitFullscreen(); }
+        }
+
+        function triggerPraise(main, sub) {
+            document.getElementById('teacher-hud')?.classList.remove('active'); 
+            const overlay = document.getElementById('praise-overlay'); const card = document.getElementById('praise-card');
+            state.xp += 100; updateHUD();
+            document.getElementById('praise-main').innerText = main; document.getElementById('praise-sub').innerText = sub;
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => card.classList.replace('scale-50', 'scale-100'), 50); shootConfetti();
+            setTimeout(() => { card.classList.replace('scale-100', 'scale-50'); overlay.classList.add('opacity-0', 'pointer-events-none'); }, 2500);
+        }
+
+        function shuffleArray(array) {
+            let curId = array.length;
+            while (0 !== curId) { let randId = Math.floor(Math.random() * curId); curId -= 1; let tmp = array[curId]; array[curId] = array[randId]; array[randId] = tmp; }
+            return array;
+        }
+
+        function shootConfetti() {
+            const cCanvas = document.getElementById('confetti-canvas'); const cCtx = cCanvas.getContext('2d');
+            cCanvas.width = window.innerWidth; cCanvas.height = window.innerHeight;
+            const pieces = []; const colors = ['#D4AF37', '#F3E5AB', '#FFFFFF'];
+            for(let i=0; i<60; i++) pieces.push({ x: cCanvas.width/2, y: cCanvas.height/2+100, vx: (Math.random()-0.5)*20, vy: (Math.random()-1)*20-5, size: Math.random()*6+3, color: colors[Math.floor(Math.random()*colors.length)], rot: Math.random()*360, rotSpeed: (Math.random()-0.5)*10 });
+            function animateC() {
+                cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height); let active = false;
+                pieces.forEach(p => {
+                    p.x += p.vx; p.y += p.vy; p.vy += 0.5; p.rot += p.rotSpeed; if(p.y < cCanvas.height) active = true;
+                    cCtx.save(); cCtx.translate(p.x, p.y); cCtx.rotate(p.rot*Math.PI/180); cCtx.fillStyle = p.color; 
+                    cCtx.fillRect(-p.size/2, -p.size/2, p.size, p.size); cCtx.restore();
+                });
+                if(active) requestAnimationFrame(animateC); else cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+            }
+            animateC();
+        }
+        
+        window.onload = () => { updateHUD(); buildLessonNavigator(); goHome(); };
+    </script>
+</body>
+</html>
